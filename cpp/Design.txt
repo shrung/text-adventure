@@ -1,0 +1,33 @@
+Adventure Project
+
+Andrew Miller, Adam Simpson
+
+
+Each location will need a class, containing pointers to neighboring locations.
+Also containing list of items in the room, a description (possibly including a call to list of items).
+
+May need some specific rooms (inherited) which add functionality
+(maybe allowing changing doors, or description)
+
+The player class will also hold items, it will also contain a pointer to the current room, which can be updated with a move function. Each item will have a description and name which can be printed on examining an item or listing inventory. Some items may have no name or description, so they can be hidden from the user and used to keep track of states (lantern energy, how many more times can something be used, etc.)
+
+There will be several global commands:
+restart
+save
+load
+quit
+
+save and load will write/read output to a text file giving a list of items for each room, and for the player, as well as any values those items or rooms need to keep track of. Each item and room will have a save function, and a load function. So the file will be produced by saving each room to a line.
+
+We will have a game class, that will create all the rooms, items, and the player, and set them up in the constructor. It will also be responsible for calling save and load on every room and the player.
+
+The player will be inherited from the generic item type, so that rooms and items will have the base definitions of save/load.
+
+There will also be items which can hold a list of items, like a box, or a mailbox with a leaflet inside. When these items are opened, they will place the items in the room it's in, and take them back when closed. 
+
+We may also have an NPC "item" that has a flag allowing it to be updated each move, even if it isn't in the player's inventory or the current room. It may even be inherited from the player to have access to move/take items/put items/ etc. 
+
+Commands will be read in as an entire line and passed to game, and it will check for verbs, and call the appropriate player function with the remainder of the command. It may also have "secret" commands that it will do something completely different with.
+
+
+
