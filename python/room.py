@@ -108,12 +108,12 @@ class SpinningRoom(Room):
 			inv.List()
 	def Enter(self,player,silent):
 		lock = self.inv.getItem("LOCK")
-		if((_state and player.getRoom() = getN())
-		   or player.getRoom() = getS() 
-		   or(not state and player.getRoom() = getE())
-		   or player.getRoom() = getW()
-		   or player.getRoom() = getUp()
-		   or player.getRoom() = getDown()
+		if((_state and player.getRoom() == getN())
+		   or player.getRoom() == getS() 
+		   or(not state and player.getRoom() == getE())
+		   or player.getRoom() == getW()
+		   or player.getRoom() == getUp()
+		   or player.getRoom() == getDown()
 		   ):
 			if lock != None:
 				if player.getItem(lock.Description()) != None:
@@ -135,22 +135,22 @@ class SpinningRoom(Room):
 		self.inv.Update(self)
 		
 	def getN(self):
-		if _state = True:
+		if _state == True:
 			return self._N
 		else:
 			return None
 	def getS(self):
-		if _state = True:
+		if _state == True:
 			return self._S
 		else:
 			return None
 	def getE(self):
-		if _state = True:
+		if _state == True:
 			return self._E
 		else:
 			return None
 	def getW(self):
-		if _state = True:
+		if _state == True:
 			return self._W
 		else:
 			return None
