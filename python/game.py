@@ -7,17 +7,9 @@ from room import *
 from troll import *
 
 class Game:
-    _troll
-    _numrooms
-    _numitems
-    _rooms
-    _me
-    _turn
-    _score
-    _dead
     def _MoveTroll(self,moveto):
         if moveto != None:
-            if moveto.Enter(self._troll,true):
+            if moveto.Enter(self._troll,True):
                 self._troll.SetRoom(moveto)
     def _Look(self):
         self._me.GetRoom().Describe()
@@ -116,9 +108,9 @@ class Game:
                 return False
         Print("There is no "+name+" here");
         return False
-    def _Update():
+    def _Update(self):
         self._me.Update()
-        for room in self._rooms
+        for room in self._rooms:
             room.Update()
         if self._troll:
             self._MoveTroll(self._troll.Move())
@@ -128,8 +120,8 @@ class Game:
                 return
         if self._troll:
             self._troll.Update()
-        self._turn++
-    def _Move(moveto):
+        self._turn=self._turn+1
+    def _Move(self,moveto):
         if moveto != None:
             if moveto.Enter(self._me, False):
                 self._me.GetRoom().inv.RemoveItem("PLAYER")
@@ -143,7 +135,10 @@ class Game:
     def Turn(self, command):
         wordlist = command.split(sep = " ",maxsplit = 1)
         action = wordlist[0]
-        item = wordlist[1]
+        if len(wordlist)>1:
+            item = wordlist[1]
+        else:
+            item = ""
         if self._dead:
             Print("You are dead.")
             return
@@ -166,7 +161,7 @@ class Game:
             if self._me.CanMove():
                 if self._Move(self._me.GetRoom().GetW()):
                     self._Update()
-         elif command == "u" or command == "up":
+        elif command == "u" or command == "up":
             if self._me.CanMove():
                 if self._Move(self._me.GetRoom().GetUp()):
                     self._Update()
@@ -204,14 +199,14 @@ class Game:
         self._turn = 0
         self._score = 0
         self._numrooms = 21
-        N =    [ 1, 3,17,-1,-1,-1,-1,-1,-1, 8, 9,-1,10,18,-1,-1,-1, 5,19,20,14]
-        S =    [-1, 0,-1, 1,-1,17,-1,-1, 9,10,12,-1,-1,-1,20,-1,-1, 2,13,18,19]
-        E =    [-1, 2,-1,17,-1,-1,-1, 8,-1,-1,11,-1,-1,-1,-1,-1,-1, 4,-1,-1,-1]
-        W =    [-1,-1, 1,-1,17,-1,-1,-1, 7,-1,-1,10,-1,-1,-1,-1,-1, 3,-1,-1,-1]
-        Up =   [-1,-1,-1,-1, 6,-1,-1,-1,-1,-1,-1, 1,-1,12,15,16,-1,-1,-1,-1,-1]
-        Down = [-1,11,-1,-1,-1,-1, 4,-1,-1,-1,-1,-1,13,-1,-1,14,15,-1,-1,-1,-1]
+        N =    [ 1, 3,17,None,None,None,None,None,None, 8, 9,None,10,18,None,None,None, 5,19,20,14]
+        S =    [None, 0,None, 1,None,17,None,None, 9,10,12,None,None,None,20,None,None, 2,13,18,19]
+        E =    [None, 2,None,17,None,None,None, 8,None,None,11,None,None,None,None,None,None, 4,None,None,None]
+        W =    [None,None, 1,None,17,None,None,None, 7,None,None,10,None,None,None,None,None, 3,None,None,None]
+        Up =   [None,None,None,None, 6,None,None,None,None,None,None, 1,None,12,15,16,None,None,None,None,None]
+        Down = [None,11,None,None,None,None, 4,None,None,None,None,None,13,None,None,14,15,None,None,None,None]
         
-        description[] = [
+        description = [
     "You are in a boring, unimaginative, nondescript, plain, old, ugly, room. There is a door leading to the North. Nothing else.",
     "You are standing in a large room. There is a hole in the ground that looks large enough to climb Down. There are also two corridors. One leading North, and one leading East.",
     "This passageway has an exit to the West and a door to the North. The door seems to come and go, but it is moving slow enough to enter safely.",
@@ -245,44 +240,42 @@ class Game:
             self._rooms.append(temproom)
         #BoxPrint("CREATED ROOMS!");
         for i in range(0,self._numrooms):
-            self._rooms.SetN((N[i]<0) ? NULL: room[N[i]]);
-            room[i]->SetS((S[i]<0) ? NULL: room[S[i]]);
-            room[i]->SetE((E[i]<0) ? NULL: room[E[i]]);
-            room[i]->SetW((W[i]<0) ? NULL: room[W[i]]);
-            room[i]->SetUp((Up[i]<0) ? NULL: room[Up[i]]);
-            room[i]->SetDown((Down[i]<0) ? NULL: room[Down[i]]);
-            room[i]->SetDesc(description[i]);
-        }
+            self._rooms[i].SetN(self._rooms[N[i]] if N[i] != None else None)
+            self._rooms[i].SetS(self._rooms[S[i]] if S[i] != None else None)
+            self._rooms[i].SetE(self._rooms[E[i]] if E[i] != None else None)
+            self._rooms[i].SetW(self._rooms[W[i]] if W[i] != None else None)
+            self._rooms[i].SetUp(self._rooms[Up[i]] if Up[i] != None else None)
+            self._rooms[i].SetDown(self._rooms[Down[i]] if Down[i] != None else None)
+            self._rooms[i].SetDesc(description[i])
         #BoxPrint("DONE WITH ROOMS!");
         
     #/********
     #ITEMS!!!!
     #********/
-        room[1]->inv.AddItem(new Item("broken ladder", "The remains of a ladder lead down the hole. It is firmly fastened to the ground.",0,false,false));
-        room[4]->inv.AddItem(new Item("ladder", "The ladder leads up through the trap door. It appears solid.",1,false,false));
-        room[5]->inv.AddItem(new Item("inscription", "This mysterious inscription reads: \"Only the weak may obtain the Sword in the Stone.\"",100,false,false));
-        room[5]->inv.AddItem(new Item("brick","This is a very heavy looking cinderblock.",45,false,true));
-        room[7]->inv.AddItem(new Item("LOCK", "tiny key", 100, true, false));
-        room[8]->inv.AddItem(new Item("lock", "This intricate mechanical system looks like it needs a tiny key to open it.",100,false,false));
-        room[16]->inv.AddItem(new Crate("wooden box", "A small, inexpensive looking box. It seems glued to the floor."));
-        static_cast<Crate*>(room[16]->inv.getItem("wooden box"))->inv.AddItem(new Item("tiny key", "A small, expensive looking key.",1,false,true));
-        room[6]->inv.AddItem(new LockedCrate("stone crate", "A massive crate made of stone. There is a rusty, weak-looking lock fastened to it."));
-        static_cast<Crate*>(room[6]->inv.getItem("stone crate"))->inv.AddItem(new Item("LOCK", "the weak lock",1,true,false));
-        room[6]->inv.AddItem(new Item("weak lock", "A rusty, weak looking lock",100,false,false));
-        static_cast<Crate*>(room[6]->inv.getItem("stone crate"))->inv.AddItem(new Item("adventure sword", "A beautiful sword, it fits perfectly in your hand.",6,false,true));
+        self._rooms[1].inv.AddItem(Item("broken ladder", "The remains of a ladder lead down the hole. It is firmly fastened to the ground.",0,False,False))
+        self._rooms[4].inv.AddItem(Item("ladder", "The ladder leads up through the trap door. It appears solid.",1,False,False))
+        self._rooms[5].inv.AddItem(Item("inscription", "This mysterious inscription reads: \"Only the weak may obtain the Sword in the Stone.\"",100,False,False))
+        self._rooms[5].inv.AddItem(Item("brick","This is a very heavy looking cinderblock.",45,False,True))
+        self._rooms[7].inv.AddItem(Item("LOCK", "tiny key", 100, True, False))
+        self._rooms[8].inv.AddItem(Item("lock", "This intricate mechanical system looks like it needs a tiny key to open it.",100,False,False))
+        self._rooms[16].inv.AddItem(Crate("wooden box", "A small, inexpensive looking box. It seems glued to the floor."))
+        self._rooms[16].inv.getItem("wooden box").inv.AddItem(Item("tiny key", "A small, expensive looking key.",1,False,True))
+        self._rooms[6].inv.AddItem(LockedCrate("stone crate", "A massive crate made of stone. There is a rusty, weak-looking lock fastened to it."))
+        self._rooms[6].inv.getItem("stone crate").inv.AddItem(Item("LOCK", "the weak lock",1,True,False))
+        self._rooms[6].inv.AddItem(Item("weak lock", "A rusty, weak looking lock",100,False,False))
+        self._rooms[6].inv.getItem("stone crate").inv.AddItem(Item("adventure sword", "A beautiful sword, it fits perfectly in your hand.",6,False,True))
         
 
-        room[12]->inv.AddItem(new Item("sign", "This poorly written sign says: \"DONE'T ENTUR.\"",100,false,false));
+        self._rooms[12].inv.AddItem(Item("sign", "This poorly written sign says: \"DONE'T ENTUR.\"",100,False,False))
         
         
-        room[rand()%20+1]->inv.AddItem(new Item("rock", "A boring rock. It looks like it has a little weight to it.",15,false, true));
-        room[rand()%20+1]->inv.AddItem(new Item("rock", "A boring rock. It looks like it has a little weight to it.",15,false, true));
-        room[rand()%20+1]->inv.AddItem(new Item("rock", "A boring rock. It looks like it has a little weight to it.",15,false, true));
+        self._rooms[random.randint(1,20)].inv.AddItem(Item("rock", "A boring rock. It looks like it has a little weight to it.",15,False, True))
+        self._rooms[random.randint(1,20)].inv.AddItem(Item("rock", "A boring rock. It looks like it has a little weight to it.",15,False, True))
+        self._rooms[random.randint(1,20)].inv.AddItem(Item("rock", "A boring rock. It looks like it has a little weight to it.",15,False, True))
 
-        troll = new Troll(room[rand()%13+8]);
+        self._troll = Troll(self._rooms[random.randint(8,20)])
         
-        //BoxPrint("CREATED TROLL");
+        #//BoxPrint("CREATED TROLL");
         
-        me = new Player(room[0]);
-        Look();
-    }
+        self._me = Player(self._rooms[0])
+        self._Look()

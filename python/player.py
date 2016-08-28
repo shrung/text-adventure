@@ -7,10 +7,7 @@ from item import *
 MAXITEMS = 10
 
 class Player:
-    _myself
-    _room
-    _maxweight
-    def __init__(self,start = None)
+    def __init__(self,start = None):
         self._myself = Item(name="PLAYER",description = "the user",weight = 49,hidden = True, movable = False)
         if start == None:
             self._room  = Room()
@@ -18,6 +15,7 @@ class Player:
             self._room = start
             start.inv.AddItem(self._myself)        
         self._maxweight = 50
+        self.inv=Inventory()
     def MyInv(self):
         if self.inv.visItems():
             Print("You are carrying:")

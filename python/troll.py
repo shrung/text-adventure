@@ -7,14 +7,11 @@ from room import *
 import random
 
 class Troll(Player):
-    _attack
-    _chase
-    _myself
     def __init__(self,start = None):
         self._chase = False
         self._attack = False
         self._maxweight = 50
-        self._myself = Item(name = "troll",description = "A very smelly troll. He also looks quite mean. You should probably be running...",weight = 49,hidden = false, movable = false)
+        self._myself = Item(name = "troll",description = "A very smelly troll. He also looks quite mean. You should probably be running...",weight = 49,hidden = False, movable = False)
         if start == None:
             self._room  = Room()
         else:
@@ -33,7 +30,7 @@ class Troll(Player):
             if self.GetRoom().inv.getItem("PLAYER"):
                 self._attack=True
                 return self.GetRoom()
-			if self.GetRoom().GetN():
+            if self.GetRoom().GetN():
                 if self.GetRoom().GetN().inv.getItem("PLAYER"):
                     return self.GetRoom().GetN()
             if self.GetRoom().GetS():

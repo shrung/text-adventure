@@ -3,11 +3,6 @@
 from printer import *
 
 class Item:
-    _name
-    _description
-    _weight
-    _invis
-    _movable
     def isOpen(self):
         return False
     def Open(self):
@@ -15,42 +10,41 @@ class Item:
     def Close(self):
         Print("The "+self._name+" doesn't close")
         return False
-	def Hidden(self):
+    def Hidden(self):
         return self._invis
-	def __init__(self,name="",description="",weight=0,hidden=False,movable=True):
+    def __init__(self,name="",description="",weight=0,hidden=False,movable=True):
         self._name=name
         self._description=description
         self._weight = weight
         self._invis = hidden
         self._movable = movable
-	def setHidden(self,hid):
+    def setHidden(self,hid):
         self._invis = hid
-	
-	def GetWeight(self):
+    
+    def GetWeight(self):
         return self._weight
-	def SetWeight(self,w)
+    def SetWeight(self,w):
         self._weight = w
-	#int GetLifetime(){return lifetime;};
-	#void SetLifetime(int life){lifetime = life;};
-	def Movable(self):
+    #int GetLifetime(){return lifetime;};
+    #void SetLifetime(int life){lifetime = life;};
+    def Movable(self):
         return self._movable
-	def Name(self):
+    def GetName(self):
         return self._name
-	def SetName(self,newname):
+    def SetName(self,newname):
         self._name = newname
-	def SetDesc(self,newdesc):
+    def SetDesc(self,newdesc):
         self._description=newdesc
-	def Update(self):
+    def Update(self):
         pass
-	def Description(self):
+    def Description(self):
         return self._description 
-	#Prints out the description (this will be looped over for all the items in a room, etc.)
-	def Describe(self):
+    #Prints out the description (this will be looped over for all the items in a room, etc.)
+    def Describe(self):
         Print(self._description)
-	#void Broken();
-	#bool Works(){return works;}
+    #void Broken();
+    #bool Works(){return works;}
 class Inventory:
-    _data
     def __init__(self):
         self._data=[]
     def AddItem(self,item):
@@ -73,7 +67,7 @@ class Inventory:
         return len(self._data)
     def visItems(self):
         for i in self._data:
-            if not i.Hidden()
+            if not i.Hidden():
                 return True
         return False
     def Weight(self):
@@ -95,8 +89,6 @@ class Inventory:
             i.Update()
 
 class Crate(Item):
-    _open
-    inv
     def List(self,spaces=0):
         if self._open:
             if not self.inv.visItems():
