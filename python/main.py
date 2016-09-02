@@ -43,19 +43,17 @@ def main():
             elif command =="save":
                 BoxPrint("Enter filename for save:")
                 fname = input()
-                with open(fname,'w') as Save:
-                    if not Save:
-                        BoxPrint("Error opening file. Your game is not saved.")
-                    else:
+                try:
+                    with open(fname,'w') as Save:
                         Save.write(str(seed)+"\n")
                         Save.write(save)
+                except IOError:
+                    BoxPrint("Error opening file. Your game is not saved.")
             elif command == "load":
                 BoxPrint("Enter filename to load:")
                 fname = input()
-                with open(fname,'r') as Load:
-                    if not Load:
-                        BoxPrint("Error opening file. Unable to load game.")
-                    else:
+                try:
+                    with open(fname,'r') as Load:
                         save = "";
                         seed = float(Load.readline())
                         random.seed(seed)
@@ -67,6 +65,8 @@ def main():
                                 Print(">>"+command)
                                 mygame.Turn(command);
                                 save = save+"\n"+command
+                except IOError:
+                    BoxPrint("Error opening file. Unable to load game.")
             elif command == "help":
                 BoxPrint("\"n\" or \"north\" --- Moves to the north. The other directions are similar.")
                 BoxPrint("\"look\" --- Looks around the room you are in. (Takes time...)")
