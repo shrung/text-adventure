@@ -10,10 +10,9 @@ class Player:
     def __init__(self,start = None):
         self._myself = Item(name="PLAYER",description = "the user",weight = 49,hidden = True, movable = False)
         if start == None:
-            self._room  = Room()
+            self._room  = 0
         else:
-            self._room = start
-            start.inv.AddItem(self._myself)        
+            self._room = start      
         self._maxweight = 50
         self.inv=Inventory()
     def MyInv(self):

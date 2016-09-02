@@ -29,7 +29,7 @@ class Troll(Player):
         if self._chase:
             if self.GetRoom().inv.getItem("PLAYER"):
                 self._attack=True
-                return self.GetRoom()
+                return self.GetRoom().GetHere()
             if self.GetRoom().GetN():
                 if self.GetRoom().GetN().inv.getItem("PLAYER"):
                     return self.GetRoom().GetN()

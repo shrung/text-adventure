@@ -16,6 +16,8 @@ class Room:
     def __init__(self):
         self._description = "this room has not been configured."
         self.inv = Inventory()
+    def SetHere(self,here):
+        self._here = here
     def SetN(self,n):
         self._N = n
     def SetS(self,s):
@@ -28,6 +30,8 @@ class Room:
         self._Up = up
     def SetDown(self,down):
         self._Down = down
+    def GetHere(self):
+        return self._here
     def GetN(self):
         return self._N
     def GetS(self):
@@ -45,18 +49,18 @@ class Room:
     
     def Enter(self,player,silent):
         lock = self.inv.getItem("LOCK")
-        if(player.GetRoom == self.GetN() or
-           player.GetRoom == self.GetS() or
-           player.GetRoom == self.GetE() or
-           player.GetRoom == self.GetS() or
-           player.GetRoom == self.GetUp() or
-           player.GetRoom == self.GetDown()):
+        if(player.GetRoom() == self.GetN() or
+           player.GetRoom() == self.GetS() or
+           player.GetRoom() == self.GetE() or
+           player.GetRoom() == self.GetW() or
+           player.GetRoom() == self.GetUp() or
+           player.GetRoom() == self.GetDown()):
             if lock != None:
-                if player.getItem(lock.self._description()) != None:
+                if player.getItem(lock.Description()) != None:
                     if not silent:
-                        Print("You unlock the door with the",lock.self._description)
+                        Print("You unlock the door with the",lock.Description())
                     self.inv.getItem("LOCK").SetName("UNLOCKED")
-                    return(Enter(self,player,silent))
+                    return Enter(self,player,silent)
                 elif not silent:
                     Print("That room is locked!")
                     return False
@@ -93,15 +97,15 @@ class SpinningRoom(Room):
             Print(self._description+self._ns)
         if self.inv.visItems():
             Print("The room contains:")
-            inv.List()
+            self.inv.List()
     def Enter(self,player,silent):
         lock = self.inv.getItem("LOCK")
-        if((_state and player.getRoom() == getN())
-           or player.getRoom() == getS() 
-           or(not state and player.getRoom() == getE())
-           or player.getRoom() == getW()
-           or player.getRoom() == getUp()
-           or player.getRoom() == getDown()
+        if((self._state and (player.GetRoom() == self.GetN()
+           or player.GetRoom() == self.GetS() ))
+           or ( (not self._state) and (player.GetRoom() == self.GetE()
+           or player.GetRoom() == self.GetW()))
+           or player.GetRoom() == self.GetUp()
+           or player.GetRoom() == self.GetDown()
            ):
             if lock != None:
                 if player.getItem(lock.Description()) != None:
@@ -122,23 +126,23 @@ class SpinningRoom(Room):
         self._state = not self._state
         self.inv.Update()
         
-    def getN(self):
-        if self._state == True:
+    def GetN(self):
+        if self._state:
             return self._N
         else:
             return None
-    def getS(self):
-        if self._state == True:
+    def GetS(self):
+        if self._state:
             return self._S
         else:
             return None
-    def getE(self):
-        if self._state == True:
+    def GetE(self):
+        if not self._state:
             return self._E
         else:
             return None
-    def getW(self):
-        if self._state == True:
+    def GetW(self):
+        if not self._state:
             return self._W
         else:
             return None

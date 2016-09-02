@@ -12,11 +12,11 @@ class Game:
             if moveto.Enter(self._troll,True):
                 self._troll.SetRoom(moveto)
     def _Look(self):
-        self._me.GetRoom().Describe()
+        self._rooms[self._me.GetRoom()].Describe()
     def _Examine(self,name):
         item = self._me.getItem(name)
         if item == None:
-            item = self._me.GetRoom().getItem(name)
+            item = self._rooms[self._me.GetRoom()].getItem(name)
         if item == None:
             Print("There is no "+name+" here.")
             return False
@@ -28,12 +28,12 @@ class Game:
                 Print("There is no "+name+" here.")
                 return False
     def _Smash(self):
-        item = self._me.GetRoom().inv.getItem("weak lock")
+        item = self._rooms[self._me.GetRoom()].inv.getItem("weak lock")
         if item != None:
             item2 = self._me.inv.getItem("rock")
             if item2 != None:
                 item.SetName("smashed lock");
-                self._me.GetRoom().inv.getItem("stone crate").inv.getItem("LOCK").SetName("UNLOCKED")
+                self._rooms[self._me.GetRoom()].inv.getItem("stone crate").inv.getItem("LOCK").SetName("UNLOCKED")
                 Print("The lock breaks apart easily")
                 return True
             else:
@@ -43,7 +43,7 @@ class Game:
             Print("There is no weak lock here")
             return False
     def _Battle(self,name):
-        item  = self._me.GetRoom().getItem(name);
+        item  = self._rooms[self._me.GetRoom()].getItem(name);
         if item != None:
             if not item.Hidden():
                 if name != "troll":
@@ -63,11 +63,11 @@ class Game:
             Print("There is no "+name+" here.")
             return False
     def _Take(self, name):
-        item = self._me.GetRoom().inv.getItem(name)
+        item = self._rooms[self._me.GetRoom()].inv.getItem(name)
         if item != None:
             if not item.Hidden():
                 if item.Movable():
-                    self._me.GetRoom().inv.RemoveItem(name)
+                    self._rooms[self._me.GetRoom()].inv.RemoveItem(name)
                     self._me.inv.AddItem(item)
                     Print("You are now carrying the "+name)
                     return True
@@ -82,7 +82,7 @@ class Game:
             if not item.Hidden():
                 if item.Movable():
                     self._me.inv.RemoveItem(name)
-                    self._me.GetRoom().inv.AddItem(item)
+                    self._rooms[self._me.GetRoom()].inv.AddItem(item)
                     Print("You drop the "+name+" to the floor")
                     return True
                 else:
@@ -91,7 +91,7 @@ class Game:
         Print("You don't have a "+name+" to drop")
         return False
     def _Open(self, name):
-        item = self._me.GetRoom().inv.getItem(name)
+        item = self._rooms[self._me.GetRoom()].inv.getItem(name)
         if item != None:
             if not item.Hidden():
                 if item.Open():
@@ -100,7 +100,7 @@ class Game:
         Print("There is no "+name+" here")
         return False
     def _Close(self, name):
-        item = self._me.GetRoom().inv.getItem(name)
+        item = self._rooms[self._me.GetRoom()].inv.getItem(name)
         if item != None:
             if not item.Hidden():
                 if item.Close():
@@ -113,7 +113,9 @@ class Game:
         for room in self._rooms:
             room.Update()
         if self._troll:
-            self._MoveTroll(self._troll.Move())
+            newroom = self._troll.Move()
+            if newroom != None:
+                self._MoveTroll(self._rooms[newroom])
         if self._troll:
             if self._troll.ShouldAttack():
                 self._Battle("troll")
@@ -122,11 +124,12 @@ class Game:
             self._troll.Update()
         self._turn=self._turn+1
     def _Move(self,moveto):
+        #print(moveto)
         if moveto != None:
-            if moveto.Enter(self._me, False):
-                self._me.GetRoom().inv.RemoveItem("PLAYER")
+            if self._rooms[moveto].Enter(self._me, False):
+                self._rooms[self._me.GetRoom()].inv.RemoveItem("PLAYER")
                 self._me.SetRoom(moveto)
-                self._me.GetRoom().inv.AddItem(self._me.MyItem())
+                self._rooms[self._me.GetRoom()].inv.AddItem(self._me.MyItem())
                 self._Look()
                 return True
         else:
@@ -147,27 +150,27 @@ class Game:
             self._Update()
         elif command == "n" or command == "north":
             if self._me.CanMove():
-                if self._Move(self._me.GetRoom().GetN()):
+                if self._Move(self._rooms[self._me.GetRoom()].GetN()):
                     self._Update()
         elif command == "s" or command == "south":
             if self._me.CanMove():
-                if self._Move(self._me.GetRoom().GetS()):
+                if self._Move(self._rooms[self._me.GetRoom()].GetS()):
                     self._Update()
         elif command == "e" or command == "east":
             if self._me.CanMove():
-                if self._Move(self._me.GetRoom().GetE()):
+                if self._Move(self._rooms[self._me.GetRoom()].GetE()):
                     self._Update()
         elif command == "w" or command == "west":
             if self._me.CanMove():
-                if self._Move(self._me.GetRoom().GetW()):
+                if self._Move(self._rooms[self._me.GetRoom()].GetW()):
                     self._Update()
         elif command == "u" or command == "up":
             if self._me.CanMove():
-                if self._Move(self._me.GetRoom().GetUp()):
+                if self._Move(self._rooms[self._me.GetRoom()].GetUp()):
                     self._Update()
         elif command == "d" or command == "down":
             if self._me.CanMove():
-                if self._Move(self._me.GetRoom().GetDown()):
+                if self._Move(self._rooms[self._me.GetRoom()].GetDown()):
                     self._Update()
         elif command == "inventory":
             self._me.MyInv()
@@ -240,12 +243,14 @@ class Game:
             self._rooms.append(temproom)
         #BoxPrint("CREATED ROOMS!");
         for i in range(0,self._numrooms):
-            self._rooms[i].SetN(self._rooms[N[i]] if N[i] != None else None)
-            self._rooms[i].SetS(self._rooms[S[i]] if S[i] != None else None)
-            self._rooms[i].SetE(self._rooms[E[i]] if E[i] != None else None)
-            self._rooms[i].SetW(self._rooms[W[i]] if W[i] != None else None)
-            self._rooms[i].SetUp(self._rooms[Up[i]] if Up[i] != None else None)
-            self._rooms[i].SetDown(self._rooms[Down[i]] if Down[i] != None else None)
+            self._rooms[i].SetHere(i)
+            self._rooms[i].SetN(N[i])
+            #print(str(self._rooms[i].GetN())+ " is north of room "+str(i))
+            self._rooms[i].SetS(S[i])
+            self._rooms[i].SetE(E[i])
+            self._rooms[i].SetW(W[i])
+            self._rooms[i].SetUp(Up[i])
+            self._rooms[i].SetDown(Down[i])
             self._rooms[i].SetDesc(description[i])
         #BoxPrint("DONE WITH ROOMS!");
         
@@ -277,5 +282,7 @@ class Game:
         
         #//BoxPrint("CREATED TROLL");
         
-        self._me = Player(self._rooms[0])
+        self._me = Player(0)
+        self._rooms[0].inv.AddItem(self._me.MyItem())
+        #print(self._rooms[self._me.GetRoom()].GetN())
         self._Look()

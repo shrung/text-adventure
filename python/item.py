@@ -57,11 +57,12 @@ class Inventory:
                 return i
         return None
     def RemoveItem(self,name):
-        ret = self._data.getItem(name)
-        self._data.remove(ret)
-        for i in _data:
+        ret = self.getItem(name)
+        for i in self._data:
             if i.isOpen():
-                i.inv.RemoveItem(name)            
+                if i.inv.RemoveItem(name) != None:
+                    return ret
+        self._data.remove(ret)
         return ret
     def getSize(self):
         return len(self._data)
@@ -77,11 +78,11 @@ class Inventory:
         return w
     def List(self,spaces=0):
         pad = ""
-        for i in Range(0,spaces):
+        for i in range(0,spaces):
             pad = pad+ ' '
         for i in self._data:
             if not i.Hidden():
-                Print(pad+i.Name())
+                Print(pad+i.GetName())
                 if i.isOpen():
                     i.List(spaces)
     def Update(self):

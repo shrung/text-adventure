@@ -44,28 +44,26 @@ def main():
                 BoxPrint("Enter filename for save:")
                 fname = input()
                 with open(fname,'w') as Save:
-                    if Save.closed():
+                    if not Save:
                         BoxPrint("Error opening file. Your game is not saved.")
                     else:
-                        Save.write(seed+"\n")
+                        Save.write(str(seed)+"\n")
                         Save.write(save)
             elif command == "load":
                 BoxPrint("Enter filename to load:")
                 fname = input()
                 with open(fname,'r') as Load:
-                    if Load.closed():
+                    if not Load:
                         BoxPrint("Error opening file. Unable to load game.")
                     else:
                         save = "";
-                        seed = int(Load.readline())
+                        seed = float(Load.readline())
                         random.seed(seed)
                         del mygame;
                         mygame = Game();
-                        command = Load.readline()
                         for line in Load:
-                            command = line
+                            command = line.rstrip()
                             if command != "":
-                                command.rstrip()
                                 Print(">>"+command)
                                 mygame.Turn(command);
                                 save = save+"\n"+command
