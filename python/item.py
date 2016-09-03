@@ -52,7 +52,8 @@ class Inventory:
     def getItem(self,name):
         for i in self._data:
             if i.isOpen():
-                return i.inv.getItem(name)
+                if i.inv.getItem(name) != None:
+                    return i.inv.getItem(name)
             if i.GetName() == name:
                 return i
         return None
@@ -62,7 +63,8 @@ class Inventory:
             if i.isOpen():
                 if i.inv.RemoveItem(name) != None:
                     return ret
-        self._data.remove(ret)
+        if ret != None:
+            self._data.remove(ret)
         return ret
     def getSize(self):
         return len(self._data)
@@ -91,11 +93,14 @@ class Inventory:
 
 class Crate(Item):
     def List(self,spaces=0):
+        pad = ""
+        for i in range(0,spaces):
+            pad = pad+ ' '
         if self._open:
             if not self.inv.visItems():
-                Print("The "+self._name+" appears to be empty.")
+                Print(pad+"The "+self._name+" appears to be empty.")
             else:
-                Print("The "+self._name+" contains:");
+                Print(pad+"The "+self._name+" contains:");
                 self.inv.List(spaces+4)
     def isOpen(self):
         return self._open
@@ -128,6 +133,7 @@ class Crate(Item):
             Print("The "+self._name+" is closed.")
     def Update(self):
         self.inv.Update()
+
 class LockedCrate(Crate):
     def __init__(self, name = "", description = ""):
         self.inv = Inventory()

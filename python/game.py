@@ -32,7 +32,7 @@ class Game:
         if item != None:
             item2 = self._me.inv.getItem("rock")
             if item2 != None:
-                item.SetName("smashed lock");
+                item.SetName("smashed lock")
                 self._rooms[self._me.GetRoom()].inv.getItem("stone crate").inv.getItem("LOCK").SetName("UNLOCKED")
                 Print("The lock breaks apart easily")
                 return True
